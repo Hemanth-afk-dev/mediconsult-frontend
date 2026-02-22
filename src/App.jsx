@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
@@ -10,7 +10,7 @@ import PharmacistDashboard from './pages/PharmacistDashboard'
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -21,7 +21,7 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/pharmacist/dashboard" element={<PharmacistDashboard />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
