@@ -5,13 +5,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 
-const testAccounts = [
-  { email: 'patient@test.com', password: '123456', role: 'patient', name: 'Hemanth Chowdary' },
-  { email: 'doctor@test.com', password: '123456', role: 'doctor', name: 'Dr. Priya Sharma' },
-  { email: 'admin@test.com', password: '123456', role: 'admin', name: 'Super Admin' },
-  { email: 'pharma@test.com', password: '123456', role: 'pharmacist', name: 'Kiran Pharma' },
-]
-
 const roleRoutes = {
   patient: '/patient/dashboard',
   doctor: '/doctor/dashboard',
@@ -27,11 +20,12 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const account = testAccounts.find(a => a.email === form.email && a.password === form.password)
-    if (account) {
-      login(account)
-      toast.success(`Welcome back, ${account.name}!`)
-      navigate(roleRoutes[account.role])
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const found = users.find(u => u.email === form.email && u.password === form.password)
+    if (found) {
+      login(found)
+      toast.success(`Welcome back, ${found.name}!`)
+      navigate(roleRoutes[found.role])
     } else {
       toast.error('Invalid email or password')
     }
@@ -58,23 +52,6 @@ function Login() {
           <h2 style={{fontFamily:'Syne,sans-serif'}} className="text-2xl font-bold text-white mb-2">Welcome back</h2>
           <p className="text-slate-400 text-sm mb-8">Sign in to your account to continue</p>
 
-          {/* Test Account Hints */}
-          <div className="bg-slate-800 rounded-xl p-4 mb-6">
-            <p className="text-slate-400 text-xs font-semibold mb-2 uppercase tracking-wider">Test Accounts (password: 123456)</p>
-            <div className="grid grid-cols-2 gap-2">
-              {testAccounts.map((acc) => (
-                <button
-                  key={acc.role}
-                  onClick={() => setForm({ email: acc.email, password: '123456' })}
-                  className="text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition"
-                >
-                  <p className="text-white text-xs font-medium capitalize">{acc.role}</p>
-                  <p className="text-slate-400 text-xs">{acc.email}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="text-slate-400 text-sm mb-2 block">Email address</label>
@@ -86,6 +63,7 @@ function Login() {
                   value={form.email}
                   onChange={e => setForm({...form, email: e.target.value})}
                   className="bg-transparent text-white placeholder-slate-500 outline-none text-sm w-full"
+                  required
                 />
               </div>
             </div>
@@ -100,11 +78,20 @@ function Login() {
                   value={form.password}
                   onChange={e => setForm({...form, password: e.target.value})}
                   className="bg-transparent text-white placeholder-slate-500 outline-none text-sm w-full"
+                  required
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-slate-400 hover:text-white transition">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+            </div>
+
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center gap-2 text-slate-400 cursor-pointer">
+                <input type="checkbox" className="accent-cyan-500" />
+                Remember me
+              </label>
+              <a href="#" className="text-cyan-400 hover:text-cyan-300 transition">Forgot password?</a>
             </div>
 
             <button type="submit" className="w-full bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-3 rounded-xl transition text-sm">

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, FileText, Pill, Video, Bell, LogOut, User, Clock, ChevronRight, Stethoscope } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -33,6 +35,18 @@ const statusStyle = {
 
 function PatientDashboard() {
   const [active, setActive] = useState('Dashboard')
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
+  const getInitials = (name) => {
+    if (!name) return 'U'
+    return name.split(' ').map(n => n[0]).join('').toUpperCase()
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex" style={{fontFamily:'DM Sans,sans-serif'}}>
@@ -48,10 +62,12 @@ function PatientDashboard() {
 
         <div className="px-6 py-5 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center text-slate-900 font-bold text-sm">HK</div>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center text-slate-900 font-bold text-sm">
+              {getInitials(user?.name)}
+            </div>
             <div>
-              <p className="text-white text-sm font-semibold">Hemanth Kumar</p>
-              <p className="text-slate-400 text-xs">Patient</p>
+              <p className="text-white text-sm font-semibold">{user?.name || 'User'}</p>
+              <p className="text-slate-400 text-xs capitalize">{user?.role || 'Patient'}</p>
             </div>
           </div>
         </div>
@@ -74,7 +90,7 @@ function PatientDashboard() {
         </nav>
 
         <div className="px-4 py-4 border-t border-slate-800">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition">
             <LogOut size={18} />
             Logout
           </button>
@@ -85,7 +101,7 @@ function PatientDashboard() {
       <main className="ml-64 flex-1 p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 style={{fontFamily:'Syne,sans-serif'}} className="text-2xl font-bold">Good morning, Hemanth 👋</h1>
+            <h1 style={{fontFamily:'Syne,sans-serif'}} className="text-2xl font-bold">Good morning, {user?.name} 👋</h1>
             <p className="text-slate-400 text-sm mt-1">Here's your health overview for today</p>
           </div>
           <button className="relative p-3 bg-slate-800 rounded-xl hover:bg-slate-700 transition">
@@ -112,7 +128,6 @@ function PatientDashboard() {
         </div>
 
         <div className="grid grid-cols-3 gap-6">
-          {/* Appointments */}
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={3} className="col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 style={{fontFamily:'Syne,sans-serif'}} className="text-lg font-bold">Upcoming Appointments</h2>
@@ -143,7 +158,6 @@ function PatientDashboard() {
             </button>
           </motion.div>
 
-          {/* Right Panel */}
           <div className="space-y-5">
             <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={4} className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
               <h2 style={{fontFamily:'Syne,sans-serif'}} className="text-lg font-bold mb-4">Quick Actions</h2>
